@@ -10,4 +10,4 @@
 	- Mapa estelar
 
 ### Plotagem
-![scatter][./scatter.png]
+![scatter][scatter.png]

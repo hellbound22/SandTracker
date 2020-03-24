@@ -8,3 +8,6 @@
 - https://cdsarc.unistra.fr/viz-bin/cat/I/311
 	- Hipparcos, the New Reduction : I/311 
 	- Mapa estelar
+
+### Plotagem
+![scatter][./scatter.png]

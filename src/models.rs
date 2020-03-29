@@ -13,7 +13,7 @@ pub struct Camera {
 
 impl Camera {
     pub fn new() -> Camera {
-        Camera {r_asc: 0.0, dec: 0.0}
+        Camera {r_asc: 20000.0, dec: 0.0}
     }
 }
 
@@ -51,14 +51,12 @@ impl App {
             if x >= self.cam.r_asc && 
                     x <= range_h && 
                     y >= self.cam.dec && 
-                    y <= range_v {
+                    y <= range_v  {
 
                 on_screen.push(((s.r_asc.to_degrees() * 60.0).round() as i64, (s.dec.to_degrees() * 60.0).round() as i64));
             }
 
         }
-        dbg!(&on_screen);
-        dbg!(on_screen.len());
         
         on_screen
     }
@@ -66,16 +64,25 @@ impl App {
     pub fn rotate(&mut self, dir: Key) {
         match dir {
             Key::Right => {
-                self.cam.r_asc += crate::STEP as f64;    
+                if self.cam.r_asc < (360.0 * 60.0) - 200.0 {
+                    self.cam.r_asc += crate::STEP as f64;    
+                }
             },
             Key::Left => {
-                self.cam.r_asc -= crate::STEP as f64;    
+                let x = self.cam.r_asc - crate::STEP as f64;
+                if x > -25.0 {
+                    self.cam.r_asc = x;
+                }
             },
             Key::Up => {
-                self.cam.dec -= crate::STEP as f64;    
+                if self.cam.dec > (-90.0 * 60.0) {
+                    self.cam.dec -= crate::STEP as f64;    
+                }
             },
             Key::Down => {
-                self.cam.dec += crate::STEP as f64;    
+                if self.cam.dec < (90.0 * 60.0) {
+                    self.cam.dec += crate::STEP as f64;    
+                }
             },
             _ => {},
         }
@@ -90,7 +97,7 @@ pub struct Canvas {
 }
 
 impl Canvas {
-    pub fn get_vec(&self, h: i64, v: i64) -> Vec<bool> {
+    pub fn _get_vec(&self, h: i64, v: i64) -> Vec<bool> {
         let mut r: Vec<bool> = Vec::new();
 
         if h == -1 {

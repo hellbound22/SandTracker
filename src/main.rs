@@ -7,7 +7,7 @@ mod models;
 
 const CANVAS_SIZE: i64 = 360 * 60;
 const FOV_SIZE: i64 = 5 * 60;
-const STEP: i64 = 1 * 60;
+const STEP: i64 = (0.2 * 60.0) as i64;
 
 fn main() {
     let mut dataset = String::new();

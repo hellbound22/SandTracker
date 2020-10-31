@@ -37,10 +37,10 @@ impl App {
         }
     }
 
-    pub fn cam_map(&self) -> Vec<(i64, i64)> {
+    pub fn cam_map(&self) -> Vec<(i64, i64, Ponto)> {
         let range_v = crate::FOV_SIZE as f64 + self.cam.dec;
         let range_h = crate::FOV_SIZE as f64 + self.cam.r_asc;
-        let mut on_screen: Vec<(i64, i64)> = Vec::new();
+        let mut on_screen: Vec<(i64, i64, Ponto)> = Vec::new();
 
         for (_k, s) in self.canvas.map.iter() {
             let x = (s.r_asc.to_degrees() * 60.0).round();
@@ -53,7 +53,7 @@ impl App {
                     y >= self.cam.dec && 
                     y <= range_v  {
 
-                on_screen.push(((s.r_asc.to_degrees() * 60.0).round() as i64, (s.dec.to_degrees() * 60.0).round() as i64));
+                on_screen.push(((s.r_asc.to_degrees() * 60.0).round() as i64, (s.dec.to_degrees() * 60.0).round() as i64, s.clone()));
             }
 
         }
@@ -129,9 +129,34 @@ pub struct Ponto {
     plx: f64,       // Paralaxe
     pub pos_h: i64, // Posição na horizontal normalizada (0-21600)
     pub pos_v: i64, // Posição na vertical normalizada (0-21600)
+    pub mag: f64,   // Magnetude (Brilho)
 }
 
 impl Ponto {
+    pub fn size(&self) -> f64 {
+        let x = (crate::DEFAULT_STAR_SIZE * self.mag()) as f64;
+        if x < 1.0 {
+            1.0
+        } else { 
+            x
+        }
+    }
+    pub fn mag(&self) -> f32 {
+        let cn = (1.0/(16.0 + 4.0)) as f32 ; // Escala
+        let f = |x: f32| {
+            ((x * cn) * -1.0) + 1.0
+        };
+
+        let pre = f(self.mag as f32);
+        if pre <= 0.05 {
+            return 0.05
+        } else if pre >= 1.0 {
+            return 1.0
+        } else {
+            return pre
+        }
+    }
+
     pub fn coord(&self) -> (i64, i64) {
         (self.pos_h, self.pos_v)
     }
@@ -146,6 +171,7 @@ impl Ponto {
         let r_asc: f64 = l.get(15..28).unwrap().trim().parse()?;
         let dec: f64 = l.get(29..42).unwrap().trim().parse()?;
         let plx: f64 = l.get(43..50).unwrap().trim().parse()?;
+        let mag: f64 = l.get(129..136).unwrap().trim().parse()?;
 
         // Determina a posição no mapa
         // Utiliza Projeção de Miller
@@ -167,6 +193,7 @@ impl Ponto {
             plx,
             pos_h,
             pos_v,
+            mag,
         })
     }
 }

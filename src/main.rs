@@ -5,6 +5,7 @@ use std::io::prelude::*;
 mod engine;
 mod models;
 
+const DEFAULT_STAR_SIZE: f32 = 5.0;
 const CANVAS_SIZE: i64 = 360 * 60;
 const FOV_SIZE: i64 = 5 * 60;
 const STEP: i64 = (0.2 * 60.0) as i64;
@@ -35,6 +36,9 @@ fn main() {
 
     for star in &sec {
         canvas.insert(star.coord(), star.clone());
+        //dbg!(star);
+        //dbg!(star.mag());
+        //dbg!(star.size());
     }
 
     let canvas = models::Canvas {
@@ -48,7 +52,6 @@ fn main() {
     );
 
     let state = models::App::new(canvas);
-    state.cam_map();
 
     engine::start(state);
 }
